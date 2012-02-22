@@ -46,7 +46,7 @@
     color: #09c;
   }
 
-  pre#message_body {
+  #message_body, #message_body pre {
     padding: 10px;
     white-space: pre-wrap;
   }
@@ -72,7 +72,7 @@
 
   <% if mail.multipart? %>
     <p class="alternate">
-      <% if body_part.content_type && body_part.content_type.match(/text\/html/) %>
+      <% if body_part.content_type && body_part.content_type.match(/text\/html|multipart\/related/) %>
         <a href="<%= name %>.txt">View plain text version</a>
       <% else %>
         <a href="<%= name %>.html">View HTML version</a>
@@ -81,8 +81,10 @@
   <% end %>
 </div>
 
-<% if body_part.content_type && body_part.content_type.match(/text\/html/) %>
+<div id="message_body">
+<% if body_part.content_type && body_part.content_type.match(/text\/html|multipart\/related/) %>
   <%= body_part.body %>
 <% else %>
-<pre id="message_body"><%= body_part.body %></pre>
+<pre><%= body_part.body %></pre>
 <% end %>
+</div>
