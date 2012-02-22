@@ -89,7 +89,4 @@ class MailView
       email_template.render(Object.new, :name => name, :mail => mail, :body_part => body_part)
     end
 
-    def get_mail_part(mail, content_type)
-      mail.parts.find { |part| part.content_type.match(content_type) }
-    end
 end
