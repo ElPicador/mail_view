@@ -24,10 +24,9 @@ class MailView
     path_info = env["PATH_INFO"]
 
     if path_info == "" || path_info == "/"
-      links = self.actions.inject({}) { |h, action|
-        h[action] = "#{env["SCRIPT_NAME"]}/#{action}"
-        h
-      }
+      links = self.actions.sort.map.do |h, action|
+        [action, "#{env["SCRIPT_NAME"]}/#{action}"]
+      end
 
       ok index_template.render(Object.new, :links => links)
     elsif path_info =~ /([\w_]+)(\.\w+)?$/
@@ -83,9 +82,14 @@ class MailView
 
       if mail.multipart?
         content_type = Rack::Mime.mime_type(format)
+        content_type = %r{text\/html|multipart\/related} if content_type == 'text/html'
         body_part = mail.parts.find { |part| part.content_type.match(content_type) } || mail.parts.first
       end
 
       email_template.render(Object.new, :name => name, :mail => mail, :body_part => body_part)
+    end
+
+    def get_mail_part(mail, content_type)
+      mail.parts.find { |part| part.content_type.match(content_type) }
     end
 end
