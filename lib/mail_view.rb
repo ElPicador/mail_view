@@ -24,7 +24,7 @@ class MailView
     path_info = env["PATH_INFO"]
 
     if path_info == "" || path_info == "/"
-      links = self.actions.sort.map.do |h, action|
+      links = self.actions.sort.map do |action|
         [action, "#{env["SCRIPT_NAME"]}/#{action}"]
       end
 
