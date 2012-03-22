@@ -28,13 +28,13 @@ class MailView
         [action, "#{env["SCRIPT_NAME"]}/#{action}"]
       end
 
-      ok index_template.render(Object.new, :links => links)
+      ok index_template.render(Object.new, :links => links), env
     elsif path_info =~ /([\w_]+)(\.\w+)?$/
       name   = $1
       format = $2 || ".html"
 
       if actions.include?(name)
-        ok render_mail(name, send(name), format)
+        ok render_mail(name, send(name), format), env
       else
         not_found
       end
@@ -65,7 +65,7 @@ class MailView
     end
 
   private
-    def ok(body)
+    def ok(body, env)
       locale = nil
       if lang = env["HTTP_ACCEPT_LANGUAGE"]
         lang = lang.split(",").map { |l|
