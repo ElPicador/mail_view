@@ -66,7 +66,19 @@ class MailView
 
   private
     def ok(body)
-      [200, {"Content-Type" => "text/html"}, [body]]
+      locale = nil
+      if lang = env["HTTP_ACCEPT_LANGUAGE"]
+        lang = lang.split(",").map { |l|
+          l += ';q=1.0' unless l =~ /;q=\d+\.\d+$/
+          l.split(';q=')
+        }.first
+        locale = lang.first.split("-").first
+      else
+        locale = I18n.default_locale
+      end
+
+      locale = env['rack.locale'] = I18n.locale = locale.to_s
+      [200, {"Content-Type" => "text/html", 'Content-Language' => locale}, [body]]
     end
 
     def not_found(pass = false)
